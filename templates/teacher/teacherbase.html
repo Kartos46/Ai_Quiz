@@ -167,7 +167,12 @@
       <h3>Online Quiz</h3>
     </div>
     <div class="right_area">
-      <a href="/logout" class="logout_btn">Logout</a>
+        <form action="{% url 'logout' %}" method="post" id="logoutForm" style="display:inline;">
+         {% csrf_token %}
+         <button type="submit" class="logout_btn">
+          <i class="fas fa-sign-out-alt"></i> Logout
+         </button>
+        </form>
     </div>
   </header>
   <!--header area end-->

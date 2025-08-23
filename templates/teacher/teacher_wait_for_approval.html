@@ -24,10 +24,41 @@
         <h1 class="display-4">Hello {{request.user.first_name}}</h1>
         <p class="lead">Your Account is not approved till now <br><br>Our Team is checking your profile <br><br> Soon Your Account Will Be Approved</p>
         <hr class="my-4">
-        <p>Check Later</p>
-        <p class="lead">
-          <a class="btn btn-primary btn-lg" href="/logout" role="button">Logout For Now</a>
-        </p>
+        <p style="text-align:center; font-weight:bold; margin-top:20px;">Check Later</p>
+
+        <!-- Logout Button just below -->
+        <div style="text-align:center; margin-top:20px;">
+          <form action="{% url 'logout' %}" method="post" style="display:inline;">
+             {% csrf_token %}
+             <button type="submit" 
+                   style="padding:10px 20px; 
+                          border:2px solid #000; 
+                          border-radius:6px;
+                          background:#fff; 
+                          color:#000; 
+                          font-size:16px; 
+                          cursor:pointer;
+                          transition: all 0.3s ease;">
+              <i class="fas fa-sign-out-alt"></i> Logout For Now
+              </button>
+          </form>
+       </div>
+
+<!-- Hover effect -->
+<script>
+  const logoutBtn = document.querySelector('form button');
+  logoutBtn.addEventListener('mouseover', () => {
+    logoutBtn.style.background = '#19B3D3';
+    logoutBtn.style.color = '#fff';
+    logoutBtn.style.borderColor = '#19B3D3';
+  });
+  logoutBtn.addEventListener('mouseout', () => {
+    logoutBtn.style.background = '#fff';
+    logoutBtn.style.color = '#000';
+    logoutBtn.style.borderColor = '#000';
+  });
+</script>
+
       </div>
 
 {% include "quiz/footer.html" %}

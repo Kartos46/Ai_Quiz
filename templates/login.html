@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Quiz Platform - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --light: #f8f9fa;
+            --dark: #343a40;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            background: var(--primary);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .login-header h2 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .login-header i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .login-header p {
+            margin: 5px 0 0;
+            opacity: 0.9;
+        }
+        
+        .login-form {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 14px;
+            color: var(--secondary);
+        }
+        
+        .form-control {
+            border-radius: 8px;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .btn-login {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            background-color: #3651d4;
+            transform: translateY(-2px);
+        }
+        
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .divider::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        
+        .divider span {
+            background-color: white;
+            position: relative;
+            padding: 0 15px;
+            color: var(--secondary);
+        }
+        
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .social-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        
+        .facebook {
+            background-color: #3b5998;
+        }
+        
+        .google {
+            background-color: #dd4b39;
+        }
+        
+        .github {
+            background-color: #333;
+        }
+        
+        .social-btn:hover {
+            transform: translateY(-3px);
+            opacity: 0.9;
+        }
+        
+        .additional-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .additional-links a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .additional-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+        
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .demo-credentials {
+            background-color: #e8f4f8;
+            border-left: 4px solid var(--info);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .demo-credentials h5 {
+            margin-top: 0;
+            color: var(--info);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="login-header">
+                <i class="fas fa-brain"></i>
+                <h2>AI Quiz Platform</h2>
+                <p>Sign in to access your dashboard</p>
+            </div>
+            
+            <div class="login-form">
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i> Invalid username or password
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">Remember me</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login">Sign In</button>
+                </form>
+                
+                <div class="demo-credentials">
+                    <h5>Demo Credentials:</h5>
+                    <p><strong>Username:</strong> admin</p>
+                    <p><strong>Password:</strong> password</p>
+                </div>
+                
+                <div class="divider">
+                    <span>Or sign in with</span>
+                </div>
+                
+                <div class="social-login">
+                    <a href="#" class="social-btn facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-btn google">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="#" class="social-btn github">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+                
+                <div class="additional-links">
+                    <a href="#">Forgot password?</a> | 
+                    <a href="#">Create an account</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 AI Quiz Platform. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation
+            if (username === '' || password === '') {
+                showError('Please enter both username and password');
+                return;
+            }
+            
+            // Simulate login process
+            simulateLogin(username, password);
+        });
+        
+        function simulateLogin(username, password) {
+            // This is a simulation - in a real application, you would make an API call
+            
+            // Show loading state
+            const loginBtn = document.querySelector('.btn-login');
+            loginBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Signing in...';
+            loginBtn.disabled = true;
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // For demo purposes, accept these credentials
+                if (username === 'admin' && password === 'password') {
+                    // Successful login - redirect to dashboard
+                    window.location.href = '/dashboard';
+                } else {
+                    showError('Invalid username or password. Use admin/password');
+                    loginBtn.innerHTML = 'Sign In';
+                    loginBtn.disabled = false;
+                }
+            }, 1500);
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            errorDiv.style.display = 'block';
+            
+            // Hide error after 5 seconds
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Social login button effects
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            btn.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
