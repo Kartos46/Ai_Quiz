@@ -16,13 +16,30 @@ class CourseForm(forms.ModelForm):
         fields=['course_name','question_number','total_marks']
 
 class QuestionForm(forms.ModelForm):
-    
-    #this will show dropdown __str__ method course model is shown on html so override it
-    #to_field_name this will fetch corresponding value  user_id present in course model and return it
+    # This will show dropdown __str__ method course model is shown on html so override it
+    # to_field_name this will fetch corresponding value user_id present in course model and return it
     courseID=forms.ModelChoiceField(queryset=models.Course.objects.all(),empty_label="Course Name", to_field_name="id")
+    
     class Meta:
         model=models.Question
-        fields=['marks','question','option1','option2','option3','option4','answer']
+        fields=['marks','question','option1','option2','option3','option4','answer','excel_file']
         widgets = {
             'question': forms.Textarea(attrs={'rows': 3, 'cols': 50})
         }
+    
+    def __init__(self, *args, **kwargs):
+        super(QuestionForm, self).__init__(*args, **kwargs)
+        self.fields['excel_file'].help_text = 'Upload an Excel file with questions. Format: question, option1, option2, option3, option4, answer, marks'
+        self.fields['excel_file'].required = False
+
+# Add a new form for bulk Excel upload
+class BulkQuestionForm(forms.Form):
+    course = forms.ModelChoiceField(queryset=models.Course.objects.all(), empty_label="Select Course")
+    excel_file = forms.FileField(label='Excel File')
+    
+    def clean_excel_file(self):
+        excel_file = self.cleaned_data.get('excel_file')
+        if excel_file:
+            if not excel_file.name.endswith(('.xlsx', '.xls')):
+                raise forms.ValidationError("Only Excel files are allowed.")
+        return excel_file

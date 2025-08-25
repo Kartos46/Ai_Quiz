@@ -9,6 +9,9 @@ from datetime import date, timedelta
 from quiz import models as QMODEL
 from student import models as SMODEL
 from quiz import forms as QFORM
+import pandas as pd
+from django.core.exceptions import ValidationError
+
 
 
 #for showing signup/login button for teacher
@@ -84,25 +87,65 @@ def delete_exam_view(request,pk):
     course.delete()
     return HttpResponseRedirect('/teacher/teacher-view-exam')
 
-@login_required(login_url='adminlogin')
+@login_required(login_url='teacherlogin')
 def teacher_question_view(request):
     return render(request,'teacher/teacher_question.html')
+
 
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)
 def teacher_add_question_view(request):
-    questionForm=QFORM.QuestionForm()
-    if request.method=='POST':
-        questionForm=QFORM.QuestionForm(request.POST)
-        if questionForm.is_valid():
-            question=questionForm.save(commit=False)
-            course=QMODEL.Course.objects.get(id=request.POST.get('courseID'))
-            question.course=course
-            question.save()       
-        else:
-            print("form is invalid")
-        return HttpResponseRedirect('/teacher/teacher-view-question')
-    return render(request,'teacher/teacher_add_question.html',{'questionForm':questionForm})
+    from quiz.models import Question, Course
+    questionForm = QFORM.QuestionForm()
+    bulkForm = forms.BulkQuestionForm()
+
+    if request.method == 'POST':
+        if 'excel_file' in request.FILES:  # Bulk Excel upload
+            bulkForm = forms.BulkQuestionForm(request.POST, request.FILES)
+            if bulkForm.is_valid():
+                course = bulkForm.cleaned_data['course']
+                excel_file = bulkForm.cleaned_data['excel_file']
+
+                import pandas as pd
+                from django.core.exceptions import ValidationError
+
+                try:
+                    df = pd.read_excel(excel_file)
+                    required_columns = ['question', 'option1', 'option2', 'option3', 'option4', 'answer', 'marks']
+                    for col in required_columns:
+                        if col not in df.columns:
+                            raise ValidationError(f"Missing column in Excel: {col}")
+
+                    for _, row in df.iterrows():
+                        Question.objects.create(
+                            course=course,
+                            question=row['question'],
+                            option1=row['option1'],
+                            option2=row['option2'],
+                            option3=row.get('option3', ''),
+                            option4=row.get('option4', ''),
+                            answer=row['answer'],
+                            marks=row['marks']
+                        )
+
+                    return HttpResponseRedirect('/teacher/teacher-view-question')
+
+                except Exception as e:
+                    bulkForm.add_error('excel_file', f"Error processing file: {str(e)}")
+
+        else:  # Single question form
+            questionForm = QFORM.QuestionForm(request.POST)
+            if questionForm.is_valid():
+                question = questionForm.save(commit=False)
+                course = QMODEL.Course.objects.get(id=request.POST.get('courseID'))
+                question.course = course
+                question.save()
+                return HttpResponseRedirect('/teacher/teacher-view-question')
+
+    return render(request, 'teacher/teacher_add_question.html', {
+        'questionForm': questionForm,
+        'bulkForm': bulkForm
+    })
 
 @login_required(login_url='teacherlogin')
 @user_passes_test(is_teacher)

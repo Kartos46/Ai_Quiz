@@ -15,3 +15,13 @@ class TeacherForm(forms.ModelForm):
         model=models.Teacher
         fields=['address','mobile','profile_pic']
 
+class BulkQuestionForm(forms.Form):
+    course = forms.ModelChoiceField(queryset=None)
+    excel_file = forms.FileField()
+
+    def __init__(self, *args, **kwargs):
+        super(BulkQuestionForm, self).__init__(*args, **kwargs)
+        from quiz.models import Course
+        self.fields['course'].queryset = Course.objects.all()
+
+
